@@ -1,0 +1,7 @@
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.DataLayer.Sql\bin\Debug\InstLikeApp.DataLayer.Sql.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.DataLayer.Sql\bin\Debug\InstLikeApp.DataLayer.Sql.pdb
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.DataLayer.Sql\bin\Debug\InstLikeApp.Model.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.DataLayer.Sql\bin\Debug\InstLikeApp.Model.pdb
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.DataLayer.Sql\obj\Debug\InstLikeApp.DataLayer.Sql.csprojResolveAssemblyReference.cache
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.DataLayer.Sql\obj\Debug\InstLikeApp.DataLayer.Sql.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.DataLayer.Sql\obj\Debug\InstLikeApp.DataLayer.Sql.pdb

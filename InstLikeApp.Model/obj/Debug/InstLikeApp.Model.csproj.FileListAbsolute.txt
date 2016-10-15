@@ -1,0 +1,5 @@
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Model\bin\Debug\InstLikeApp.Model.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Model\bin\Debug\InstLikeApp.Model.pdb
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Model\obj\Debug\InstLikeApp.Model.csprojResolveAssemblyReference.cache
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Model\obj\Debug\InstLikeApp.Model.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Model\obj\Debug\InstLikeApp.Model.pdb

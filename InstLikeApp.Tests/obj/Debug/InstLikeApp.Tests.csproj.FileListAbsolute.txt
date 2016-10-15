@@ -1,0 +1,11 @@
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\bin\Debug\InstLikeApp.Tests.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\bin\Debug\InstLikeApp.Tests.pdb
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\bin\Debug\InstLikeApp.DataLayer.Sql.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\bin\Debug\InstLikeApp.Model.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\bin\Debug\InstLikeApp.DataLayer.Sql.pdb
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\bin\Debug\InstLikeApp.Model.pdb
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\bin\Debug\ru\Microsoft.VisualStudio.QualityTools.UnitTestFramework.resources.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\obj\Debug\InstLikeApp.Tests.csprojResolveAssemblyReference.cache
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\obj\Debug\InstLikeApp.Tests.dll
+C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Tests\obj\Debug\InstLikeApp.Tests.pdb
