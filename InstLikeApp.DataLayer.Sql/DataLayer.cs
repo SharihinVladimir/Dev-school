@@ -122,7 +122,7 @@ namespace InstLikeApp.DataLayer.Sql
                 using (var command = connection.CreateCommand())
                 {
                     Reference.Reference_ID = Guid.NewGuid();
-                    command.CommandText = "insert into References (Reference_ID, Comment_ID, User_ID) values (@Reference_ID, @Comment_ID, @User_ID)";
+                    command.CommandText = "insert into References_t (Reference_ID, Comment_ID, User_ID) values (@Reference_ID, @Comment_ID, @User_ID)";
                     command.Parameters.AddWithValue("@Reference_ID", Reference.Reference_ID);
                     command.Parameters.AddWithValue("@Comment_ID", Reference.Comment_ID);
                     command.Parameters.AddWithValue("@User_ID", Reference.User_ID);
@@ -232,7 +232,7 @@ namespace InstLikeApp.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "DELETE References WHERE Reference_ID = @Reference_ID";
+                    command.CommandText = "DELETE References_t WHERE Reference_ID = @Reference_ID";
                     command.Parameters.AddWithValue("@Reference_ID", Reference_ID);
                     int RemovalNumber = command.ExecuteNonQuery();
                     return RemovalNumber;
@@ -362,22 +362,22 @@ namespace InstLikeApp.DataLayer.Sql
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
-                        var Post = new C_Post
+                       /* var Post = new C_Post
                         {
                         };
                         Post.Post_ID = reader.GetGuid(0);
                         Post.User_ID = reader.GetGuid(1);
                         long bytes = reader.GetBytes(2, 0, Post.Picture, 0, Post.Picture.Length);
                         Post.Date = reader.GetDateTime(3);
-                        return Post;
+                        return Post;*/
 
-                      /*  return new C_Post
+                        return new C_Post
                         {
                             Post_ID = reader.GetGuid(0),
                             User_ID = reader.GetGuid(1),
                             Picture = (byte[]) reader["Picture"],
                             Date = reader.GetDateTime(3)
-                        };*/
+                        };
                     }
                 }
             }
@@ -390,7 +390,7 @@ namespace InstLikeApp.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT Reference_ID, Comment_ID, User_ID FROM References WHERE Reference_ID = @Reference_ID";
+                    command.CommandText = "SELECT Reference_ID, Comment_ID, User_ID FROM References_t WHERE Reference_ID = @Reference_ID";
                     command.Parameters.AddWithValue("@Reference_ID", Reference_ID);
                     using (var reader = command.ExecuteReader())
                     {
