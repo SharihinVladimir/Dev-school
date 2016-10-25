@@ -7,156 +7,156 @@ namespace InstLikeApp.Tests
     [TestClass]
     public class DataLayerSqlTest
     {
-        private const string ConnectionString = "Data Source=vladimir-pc; Initial Catalog=InstLikeApp2; Integrated Security=True";
+        private const string _connectionString = "Data Source=vladimir-pc; Initial Catalog=InstLikeApp2; Integrated Security=True";
 
         [TestMethod]
-        public void Should_Add_Get_Delete_User()
+        public void ShouldAddGetDeleteUser()
         {
             //arrange
-            var User = new C_User
+            var user = new User
             {
-                User_Name = Guid.NewGuid().ToString()
+                UserName = Guid.NewGuid().ToString()
             };
             //act
-            var dataLayer = new DataLayer.Sql.DataLayer(ConnectionString);
-            var addUser = dataLayer.AddUser(User);
-            var getUser = dataLayer.GetUser(addUser.User_ID);
-            var isDeleted = dataLayer.DeleteUser(getUser.User_ID);
+            var dataLayer = new DataLayer.Sql.DataLayer(_connectionString);
+            var addUser = dataLayer.AddUser(user);
+            var getUser = dataLayer.GetUser(addUser.UserId);
+            var isDeleted = dataLayer.DeleteUser(getUser.UserId);
             //asserts
-            Assert.AreEqual(addUser.User_ID, getUser.User_ID);
-            Assert.AreEqual(addUser.User_Name, getUser.User_Name);
+            Assert.AreEqual(addUser.UserId, getUser.UserId);
+            Assert.AreEqual(addUser.UserName, getUser.UserName);
             Assert.IsNotNull(isDeleted);
         }
 
         [TestMethod]
-        public void Should_Add_Get_Delete_Post()
+        public void ShouldAddGetDeletePost()
         {
             //arrange
-            var Post = new C_Post
+            var post = new Post
             {
-                User_ID = Guid.NewGuid(),
+                UserId = Guid.NewGuid(),
                 Picture = Guid.NewGuid().ToByteArray(),
                 Date = DateTime.Now
             };
             //act
-            var dataLayer = new DataLayer.Sql.DataLayer(ConnectionString);
-            var addPost = dataLayer.AddPost(Post);
-            var getPost = dataLayer.GetPost(addPost.Post_ID);
-            var isDeleted = dataLayer.DeletePost(getPost.Post_ID);
+            var dataLayer = new DataLayer.Sql.DataLayer(_connectionString);
+            var addPost = dataLayer.AddPost(post);
+            var getPost = dataLayer.GetPost(addPost.PostId);
+            var isDeleted = dataLayer.DeletePost(getPost.PostId);
             //asserts
-            Assert.AreEqual(addPost.Post_ID, getPost.Post_ID);
-            Assert.AreEqual(addPost.User_ID, getPost.User_ID);
+            Assert.AreEqual(addPost.PostId, getPost.PostId);
+            Assert.AreEqual(addPost.UserId, getPost.UserId);
             //Assert.AreEqual(addPost.Picture, getPost.Picture);
             //Assert.AreEqual(addPost.Date, getPost.Date);
             Assert.IsNotNull(isDeleted);
         }
 
         [TestMethod]
-        public void Should_Add_Get_Delete_Comment()
+        public void ShouldAddGetDeleteComment()
         {
             //arrange
-            var Comment = new C_Comment
+            var comment = new Comment
             {
-                User_ID = Guid.NewGuid(),
-                Post_ID = Guid.NewGuid(),
+                UserId = Guid.NewGuid(),
+                PostId = Guid.NewGuid(),
                 Date = DateTime.Now,
-                Comment_text = Guid.NewGuid().ToString()
+                CommentText = Guid.NewGuid().ToString()
             };
             //act
-            var dataLayer = new DataLayer.Sql.DataLayer(ConnectionString);
-            var addComment = dataLayer.AddComment(Comment);
-            var getComment = dataLayer.GetComment(addComment.Comment_ID);
-            int isDeleted = dataLayer.DeleteComment(getComment.Comment_ID);
+            var dataLayer = new DataLayer.Sql.DataLayer(_connectionString);
+            var addComment = dataLayer.AddComment(comment);
+            var getComment = dataLayer.GetComment(addComment.CommentId);
+            int isDeleted = dataLayer.DeleteComment(getComment.CommentId);
             //asserts
-            Assert.AreEqual(addComment.Comment_ID, getComment.Comment_ID);
-            Assert.AreEqual(addComment.User_ID, getComment.User_ID);
-            Assert.AreEqual(addComment.Post_ID, getComment.Post_ID);
+            Assert.AreEqual(addComment.CommentId, getComment.CommentId);
+            Assert.AreEqual(addComment.UserId, getComment.UserId);
+            Assert.AreEqual(addComment.PostId, getComment.PostId);
             //Assert.AreEqual(addComment.Date, getComment.Date);
-            Assert.AreEqual(addComment.Comment_text, getComment.Comment_text);
+            Assert.AreEqual(addComment.CommentText, getComment.CommentText);
             Assert.IsNotNull(isDeleted);
         }
 
         [TestMethod]
-        public void Should_Add_Get_Delete_Like()
+        public void ShouldAddGetDeleteLike()
         {
             //arrange
-            var Like = new C_Like
+            var like = new Like
             {
-                User_ID = Guid.NewGuid(),
-                Post_ID = Guid.NewGuid(),
+                UserId = Guid.NewGuid(),
+                PostId = Guid.NewGuid(),
             };
             //act
-            var dataLayer = new DataLayer.Sql.DataLayer(ConnectionString);
-            var addLike = dataLayer.AddLike(Like);
-            var getLike = dataLayer.GetLike(addLike.Like_ID);
-            int isDeleted = dataLayer.DeleteLike(getLike.Like_ID);
+            var dataLayer = new DataLayer.Sql.DataLayer(_connectionString);
+            var addLike = dataLayer.AddLike(like);
+            var getLike = dataLayer.GetLike(addLike.LikeId);
+            int isDeleted = dataLayer.DeleteLike(getLike.LikeId);
             //asserts
-            Assert.AreEqual(addLike.Like_ID, getLike.Like_ID);
-            Assert.AreEqual(addLike.User_ID, getLike.User_ID);
-            Assert.AreEqual(addLike.Post_ID, getLike.Post_ID);
+            Assert.AreEqual(addLike.LikeId, getLike.LikeId);
+            Assert.AreEqual(addLike.UserId, getLike.UserId);
+            Assert.AreEqual(addLike.PostId, getLike.PostId);
             Assert.IsNotNull(isDeleted);
         }
 
         [TestMethod]
-        public void Should_Add_Get_Delete_Mark()
+        public void ShouldAddGetDeleteMark()
         {
             //arrange
-            var Mark = new C_Mark
+            var mark = new Mark
             {
-                User_ID = Guid.NewGuid(),
-                Post_ID = Guid.NewGuid(),
+                UserId = Guid.NewGuid(),
+                PostId = Guid.NewGuid(),
             };
             //act
-            var dataLayer = new DataLayer.Sql.DataLayer(ConnectionString);
-            var addMark = dataLayer.AddMark(Mark);
-            var getMark = dataLayer.GetMark(addMark.Mark_ID);
-            int isDeleted = dataLayer.DeleteMark(getMark.Mark_ID);
+            var dataLayer = new DataLayer.Sql.DataLayer(_connectionString);
+            var addMark = dataLayer.AddMark(mark);
+            var getMark = dataLayer.GetMark(addMark.MarkId);
+            int isDeleted = dataLayer.DeleteMark(getMark.MarkId);
             //asserts
-            Assert.AreEqual(addMark.Mark_ID, getMark.Mark_ID);
-            Assert.AreEqual(addMark.User_ID, getMark.User_ID);
-            Assert.AreEqual(addMark.Post_ID, getMark.Post_ID);
+            Assert.AreEqual(addMark.MarkId, getMark.MarkId);
+            Assert.AreEqual(addMark.UserId, getMark.UserId);
+            Assert.AreEqual(addMark.PostId, getMark.PostId);
             Assert.IsNotNull(isDeleted);
         }
 
         [TestMethod]
-        public void Should_Add_Get_Delete_Hashtag()
+        public void ShouldAddGetDeleteHashtag()
         {
             //arrange
-            var Hashtag = new C_Hashtag
+            var hashtag = new Hashtag
             {
-                Post_ID = Guid.NewGuid(),
-                Hashtag_text = Guid.NewGuid().ToString()
+                PostId = Guid.NewGuid(),
+                HashtagText = Guid.NewGuid().ToString()
             };
             //act
-            var dataLayer = new DataLayer.Sql.DataLayer(ConnectionString);
-            var addHashtag = dataLayer.AddHashtag(Hashtag);
-            var getHashtag = dataLayer.GetHashtag(addHashtag.Hashtag_ID);
-            int isDeleted = dataLayer.DeleteHashtag(getHashtag.Hashtag_ID);
+            var dataLayer = new DataLayer.Sql.DataLayer(_connectionString);
+            var addHashtag = dataLayer.AddHashtag(hashtag);
+            var getHashtag = dataLayer.GetHashtag(addHashtag.HashtagId);
+            int isDeleted = dataLayer.DeleteHashtag(getHashtag.HashtagId);
             //asserts
-            Assert.AreEqual(addHashtag.Hashtag_ID, getHashtag.Hashtag_ID);
-            Assert.AreEqual(addHashtag.Post_ID, getHashtag.Post_ID);
-            Assert.AreEqual(addHashtag.Hashtag_text, getHashtag.Hashtag_text);
+            Assert.AreEqual(addHashtag.HashtagId, getHashtag.HashtagId);
+            Assert.AreEqual(addHashtag.PostId, getHashtag.PostId);
+            Assert.AreEqual(addHashtag.HashtagText, getHashtag.HashtagText);
             Assert.IsNotNull(isDeleted);
         }
 
         [TestMethod]
-        public void Should_Add_Get_Delete_Reference()
+        public void ShouldAddGetDeleteReference()
         {
             //arrange
-            var Reference = new C_Reference
+            var reference = new Reference
             {
-                Comment_ID = Guid.NewGuid(),
-                User_ID = Guid.NewGuid()
+                CommentId = Guid.NewGuid(),
+                UserId = Guid.NewGuid()
             };
             //act
-            var dataLayer = new DataLayer.Sql.DataLayer(ConnectionString);
-            var addReference = dataLayer.AddReference(Reference);
-            var getReference = dataLayer.GetReference(addReference.Reference_ID);
-            int isDeleted = dataLayer.DeleteReference(getReference.Reference_ID);
+            var dataLayer = new DataLayer.Sql.DataLayer(_connectionString);
+            var addReference = dataLayer.AddReference(reference);
+            var getReference = dataLayer.GetReference(addReference.ReferenceId);
+            int isDeleted = dataLayer.DeleteReference(getReference.ReferenceId);
             //asserts
-            Assert.AreEqual(addReference.Reference_ID, getReference.Reference_ID);
-            Assert.AreEqual(addReference.Comment_ID, getReference.Comment_ID);
-            Assert.AreEqual(addReference.User_ID, getReference.User_ID);
+            Assert.AreEqual(addReference.ReferenceId, getReference.ReferenceId);
+            Assert.AreEqual(addReference.CommentId, getReference.CommentId);
+            Assert.AreEqual(addReference.UserId, getReference.UserId);
             Assert.IsNotNull(isDeleted);
         }
     }

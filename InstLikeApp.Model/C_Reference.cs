@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace InstLikeApp.Model
 {
-    public class C_Reference
+    public class Reference
     {
-        public Guid Reference_ID { get; set; }
-        public Guid Comment_ID { get; set; }
-        public Guid User_ID { get; set; }
+        public Guid ReferenceId { get; set; }
+        public Guid CommentId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

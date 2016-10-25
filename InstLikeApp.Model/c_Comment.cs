@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace InstLikeApp.Model
 {
-    public class C_Comment
+    public class Comment
     {
-        public Guid Comment_ID { get; set; }
-        public Guid User_ID { get; set; }
-        public Guid Post_ID { get; set; }
+        public Guid CommentId { get; set; }
+        public Guid UserId { get; set; }
+        public Guid PostId { get; set; }
         public DateTime Date { get; set; }
-        public string Comment_text { get; set; }
+        public string CommentText { get; set; }
     }
 }

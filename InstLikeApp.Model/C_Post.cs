@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace InstLikeApp.Model
 {
-    public class C_Post
+    public class Post
     {
-        public Guid Post_ID { get; set; }
-        public Guid User_ID { get; set; }
+        public Guid PostId { get; set; }
+        public Guid UserId { get; set; }
         public byte[] Picture { get; set; }
         public DateTime Date { get; set; }
     }

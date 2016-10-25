@@ -21,360 +21,427 @@ namespace InstLikeApp.DataLayer.Sql
         }
 
         //Writing into BD--------------------------------------------------------------
-        public C_Comment AddComment(C_Comment Comment)
+        public Comment AddComment(Comment comment)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    Comment.Comment_ID = Guid.NewGuid();
-                    command.CommandText = "insert into Comments (Comment_ID, User_ID, Post_ID, Date, Comment_text) values (@Comment_ID, @User_ID, @Post_ID, @Date, @Comment_text)";
-                    command.Parameters.AddWithValue("@Comment_ID", Comment.Comment_ID);
-                    command.Parameters.AddWithValue("@User_ID", Comment.User_ID);
-                    command.Parameters.AddWithValue("@Post_ID", Comment.Post_ID);
-                    command.Parameters.AddWithValue("@Date", Comment.Date);
-                    command.Parameters.AddWithValue("@Comment_text", Comment.Comment_text);
+                    //Exceptions-----------------------------------------------------
+                    command.CommandText = "SELECT * FROM Users WHERE UserId = @userId";
+                    command.Parameters.AddWithValue("@userId", comment.UserId);
+                    var reader = command.ExecuteReader();
+                    reader.Read();
+                    var isUser = reader.HasRows;
+                    reader.Close();
+
+                    command.CommandText = "SELECT * FROM Posts WHERE PostId = @postId";
+                    command.Parameters.AddWithValue("@postId", comment.PostId);
+                    reader = command.ExecuteReader();
+                    reader.Read();
+                    var isPost = reader.HasRows;
+                    reader.Close();
+
+                    try
+                    {
+                        if (!isUser)
+                            throw new Exception("Пользователя с указанным Id не существует.");
+                        else if (!isPost)
+                            throw new Exception("Поста с указанным Id не существует.");
+                        else if (comment.CommentText.Length > 500)
+                            throw new Exception("Комментарий должен содержать не более 500 символов.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ошибка: " + ex.Message);
+                    }
+                    //------------------------------------------------------------------
+
+                    comment.CommentId = Guid.NewGuid();
+                    command.CommandText = "INSERT INTO Comments (CommentId, UserId, PostId, Date, CommentText) VALUES (@commentId, @userId, @postId, @date, @commentText)";
+                    command.Parameters.AddWithValue("@commentId", comment.CommentId);
+                    command.Parameters.AddWithValue("@userId", comment.UserId);
+                    command.Parameters.AddWithValue("@postId", comment.PostId);
+                    command.Parameters.AddWithValue("@date", comment.Date);
+                    command.Parameters.AddWithValue("@commentText", comment.CommentText);
                     command.ExecuteNonQuery();
-                    return Comment;
+                    return comment;
                 }
             }
         }
 
-        public C_Hashtag AddHashtag(C_Hashtag Hashtag)
+        public Hashtag AddHashtag(Hashtag hashtag)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    Hashtag.Hashtag_ID = Guid.NewGuid();
-                    command.CommandText = "insert into Hashtags (Hashtag_ID,Post_ID,Hashtag_text) values (@Hashtag_ID, @Post_ID, @Hashtag_text)";
-                    command.Parameters.AddWithValue("@Hashtag_ID", Hashtag.Hashtag_ID);
-                    command.Parameters.AddWithValue("@Post_ID", Hashtag.Post_ID);
-                    command.Parameters.AddWithValue("@Hashtag_text", Hashtag.Hashtag_text);
+                    //Exceptions-----------------------------------------------------
+                    /*command.CommandText = "SELECT * FROM Posts WHERE PostId = @postId";
+                    command.Parameters.AddWithValue("@postId", hashtag.PostId);
+                    var readerPostId = command.ExecuteReader();
+                    readerPostId.Read();
+
+                    try
+                    {
+                        if (!readerPostId.HasRows)
+                            throw new Exception("Поста с указанным Id не существует.");
+                        else if (hashtag.HashtagText.Length > 30)
+                            throw new Exception("Хэштег должен содержать не более 30 символов.");
+                        else if (hashtag.HashtagText[0] != '#')
+                            throw new Exception("Хэштег должен начинаться с символа '#'.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ошибка: " + ex.Message);
+                    }*/
+                    //------------------------------------------------------------------
+
+                    hashtag.HashtagId = Guid.NewGuid();
+                    command.CommandText = "INSERT INTO Hashtags (HashtagId, PostId, HashtagText) VALUES (@hashtagId, @postId, @hashtagText)";
+                    command.Parameters.AddWithValue("@hashtagId", hashtag.HashtagId);
+                    command.Parameters.AddWithValue("@postId", hashtag.PostId);
+                    command.Parameters.AddWithValue("@hashtagText", hashtag.HashtagText);
                     command.ExecuteNonQuery();
-                    return Hashtag;
+                    return hashtag;
                 }
             }
         }
 
-        public C_Like AddLike(C_Like Like)
+        public Like AddLike(Like like)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    Like.Like_ID = Guid.NewGuid();
-                    command.CommandText = "insert into Likes (Like_ID,User_ID,Post_ID) values (@Like_ID, @User_ID, @Post_ID)";
-                    command.Parameters.AddWithValue("@Like_ID", Like.Like_ID);
-                    command.Parameters.AddWithValue("@User_ID", Like.User_ID);
-                    command.Parameters.AddWithValue("@Post_ID", Like.Post_ID);
+                    //Exceptions-----------------------------------------------------
+                   /* command.CommandText = "SELECT * FROM Users WHERE UserId = @userId";
+                    command.Parameters.AddWithValue("@userId", like.UserId);
+                    var readerUserId = command.ExecuteReader();
+                    readerUserId.Read();
+
+                    command.CommandText = "SELECT * FROM Posts WHERE PostId = @postId";
+                    command.Parameters.AddWithValue("@postId", like.PostId);
+                    var readerPostId = command.ExecuteReader();
+                    readerPostId.Read();
+
+                    command.CommandText = "SELECT * FROM Posts WHERE (PostId = @postId) AND (UserId = @userId) ";
+                    command.Parameters.AddWithValue("@postId", like.PostId);
+                    command.Parameters.AddWithValue("@userId", like.UserId);
+                    var readerUserPostId = command.ExecuteReader();
+                    readerPostId.Read();
+
+                    try
+                    {
+                        if (!readerUserId.HasRows)
+                            throw new Exception("Пользователя с указанным Id не существует.");
+                        else if (!readerPostId.HasRows)
+                            throw new Exception("Поста с указанным Id не существует.");
+                        else if (readerUserPostId.HasRows)
+                            throw new Exception("Лайк от указанного пользователя для указанного поста уже существует.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ошибка: " + ex.Message);
+                    }*/
+                    //------------------------------------------------------------------
+
+                    like.LikeId = Guid.NewGuid();
+                    command.CommandText = "INSERT INTO Likes (LikeId,UserId,PostId) VALUES (@likeId, @userId, @postId)";
+                    command.Parameters.AddWithValue("@likeId", like.LikeId);
+                    command.Parameters.AddWithValue("@userId", like.UserId);
+                    command.Parameters.AddWithValue("@postId", like.PostId);
                     command.ExecuteNonQuery();
-                    return Like;
+                    return like;
                 }
             }
         }
 
-        public C_Mark AddMark(C_Mark Mark)
+        public Mark AddMark(Mark mark)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    Mark.Mark_ID = Guid.NewGuid();
-                    command.CommandText = "insert into Marks (Mark_ID,Post_ID,User_ID) values (@Mark_ID, @Post_ID, @User_ID)";
-                    command.Parameters.AddWithValue("@Mark_ID", Mark.Mark_ID);
-                    command.Parameters.AddWithValue("@Post_ID", Mark.Post_ID);
-                    command.Parameters.AddWithValue("@User_ID", Mark.User_ID);
+                    mark.MarkId = Guid.NewGuid();
+                    command.CommandText = "INSERT INTO Marks (MarkId, PostId, UserId) VALUES (@markId, @postId, @userId)";
+                    command.Parameters.AddWithValue("@markId", mark.MarkId);
+                    command.Parameters.AddWithValue("@postId", mark.PostId);
+                    command.Parameters.AddWithValue("@userId", mark.UserId);
                     command.ExecuteNonQuery();
-                    return Mark;
+                    return mark;
                 }
             }
         }
 
-        public C_Post AddPost(C_Post Post)
+        public Post AddPost(Post post)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    Post.Post_ID = Guid.NewGuid();
-                    command.CommandText = "insert into Posts (Post_ID, User_ID, Picture, Date) values (@Post_ID, @User_ID, @Picture, @Date)";
-                    command.Parameters.AddWithValue("@Post_ID", Post.Post_ID);
-                    command.Parameters.AddWithValue("@User_ID", Post.User_ID);
-                    command.Parameters.AddWithValue("@Picture", Post.Picture);
-                    command.Parameters.AddWithValue("@Date", Post.Date);
+                    post.PostId = Guid.NewGuid();
+                    command.CommandText = "INSERT INTO Posts (PostId, UserId, Picture, Date) VALUES (@postId, @userId, @picture, @date)";
+                    command.Parameters.AddWithValue("@postId", post.PostId);
+                    command.Parameters.AddWithValue("@userId", post.UserId);
+                    command.Parameters.AddWithValue("@picture", post.Picture);
+                    command.Parameters.AddWithValue("@date", post.Date);
                     command.ExecuteNonQuery();
-                    return Post;
+                    return post;
                 }
             }
         }
 
-        public C_Reference AddReference(C_Reference Reference)
+        public Reference AddReference(Reference reference)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    Reference.Reference_ID = Guid.NewGuid();
-                    command.CommandText = "insert into References_t (Reference_ID, Comment_ID, User_ID) values (@Reference_ID, @Comment_ID, @User_ID)";
-                    command.Parameters.AddWithValue("@Reference_ID", Reference.Reference_ID);
-                    command.Parameters.AddWithValue("@Comment_ID", Reference.Comment_ID);
-                    command.Parameters.AddWithValue("@User_ID", Reference.User_ID);
+                    reference.ReferenceId = Guid.NewGuid();
+                    command.CommandText = "INSERT INTO References_t (ReferenceId, CommentId, UserId) VALUES (@referenceId, @commentId, @userId)";
+                    command.Parameters.AddWithValue("@referenceId", reference.ReferenceId);
+                    command.Parameters.AddWithValue("@commentId", reference.CommentId);
+                    command.Parameters.AddWithValue("@userId", reference.UserId);
                     command.ExecuteNonQuery();
-                    return Reference;
+                    return reference;
                 }
             }
         }
 
-        public C_User AddUser(C_User User)
+        public User AddUser(User user)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    User.User_ID = Guid.NewGuid();
-                    command.CommandText = "insert into Users (User_ID, User_Name) values (@User_ID, @User_Name)";
-                    command.Parameters.AddWithValue("@User_ID", User.User_ID);
-                    command.Parameters.AddWithValue("@User_Name", User.User_Name);
+                    user.UserId = Guid.NewGuid();
+                    command.CommandText = "INSERT INTO Users (UserId, UserName) VALUES (@userId, @userName)";
+                    command.Parameters.AddWithValue("@userId", user.UserId);
+                    command.Parameters.AddWithValue("@userName", user.UserName);
                     command.ExecuteNonQuery();
-                    return User;
+                    return user;
                 }
             }
         }
 
         //Removal from BD--------------------------------------------------------------
-        public int DeleteComment(Guid Comment_ID)
+        public int DeleteComment(Guid commentId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "DELETE Comments WHERE Comment_ID = @Comment_ID";
-                    command.Parameters.AddWithValue("@Comment_ID", Comment_ID);
-                    int RemovalNumber = command.ExecuteNonQuery();
-                    return RemovalNumber;//количество удаленных объектов
+                    command.CommandText = "DELETE Comments WHERE CommentId = @commentId";
+                    command.Parameters.AddWithValue("@commentId", commentId);
+                    return command.ExecuteNonQuery();//number of deleted items
                 }
             }
         }
 
-        public int DeleteHashtag(Guid Hashtag_ID)
+        public int DeleteHashtag(Guid hashtagId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "DELETE Hashtags WHERE Hashtag_ID = @Hashtag_ID";
-                    command.Parameters.AddWithValue("@Hashtag_ID", Hashtag_ID);
-                    int RemovalNumber = command.ExecuteNonQuery();
-                    return RemovalNumber;
+                    command.CommandText = "DELETE Hashtags WHERE HashtagId = @hashtagId";
+                    command.Parameters.AddWithValue("@hashtagId", hashtagId);
+                    return command.ExecuteNonQuery();
                 }
             }
         }
 
-        public int DeleteLike(Guid Like_ID)
+        public int DeleteLike(Guid likeId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "DELETE Likes WHERE Like_ID = @Like_ID";
-                    command.Parameters.AddWithValue("@Like_ID", Like_ID);
-                    int RemovalNumber = command.ExecuteNonQuery();
-                    return RemovalNumber;
+                    command.CommandText = "DELETE Likes WHERE LikeId = @likeId";
+                    command.Parameters.AddWithValue("@likeId", likeId);
+                    return command.ExecuteNonQuery();
                 }
             }
         }
 
-        public int DeleteMark(Guid Mark_ID)
+        public int DeleteMark(Guid markId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "DELETE Marks WHERE Mark_ID = @Mark_ID";
-                    command.Parameters.AddWithValue("@Mark_ID", Mark_ID);
-                    int RemovalNumber = command.ExecuteNonQuery();
-                    return RemovalNumber;
+                    command.CommandText = "DELETE Marks WHERE MarkId = @markId";
+                    command.Parameters.AddWithValue("@markId", markId);
+                    return command.ExecuteNonQuery();
                 }
             }
         }
 
-        public int DeletePost(Guid Post_ID)
+        public int DeletePost(Guid postId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "DELETE Posts WHERE Post_ID = @Post_ID";
-                    command.Parameters.AddWithValue("@Post_ID", Post_ID);
-                    int RemovalNumber = command.ExecuteNonQuery();
-                    return RemovalNumber;
+                    command.CommandText = "DELETE Posts WHERE PostId = @postId";
+                    command.Parameters.AddWithValue("@postId", postId);
+                    return command.ExecuteNonQuery();
                 }
             }
         }
 
-        public int DeleteReference(Guid Reference_ID)
+        public int DeleteReference(Guid referenceId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "DELETE References_t WHERE Reference_ID = @Reference_ID";
-                    command.Parameters.AddWithValue("@Reference_ID", Reference_ID);
-                    int RemovalNumber = command.ExecuteNonQuery();
-                    return RemovalNumber;
+                    command.CommandText = "DELETE References_t WHERE ReferenceId = @referenceId";
+                    command.Parameters.AddWithValue("@referenceId", referenceId);
+                    return command.ExecuteNonQuery();
                 }
             }
         }
 
-        public int DeleteUser(Guid User_ID)
+        public int DeleteUser(Guid userId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "DELETE Users WHERE User_ID = @User_ID";
-                    command.Parameters.AddWithValue("@User_ID", User_ID);
-                    int RemovalNumber = command.ExecuteNonQuery();
-                    return RemovalNumber;
+                    command.CommandText = "DELETE Users WHERE UserId = @userId";
+                    command.Parameters.AddWithValue("@userId", userId);
+                    return command.ExecuteNonQuery();
                 }
             }
         }
 
         //Reading from BD--------------------------------------------------------------
-        public C_Comment GetComment(Guid Comment_ID)
+        public Comment GetComment(Guid commentId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT Comment_ID, User_ID, Post_ID, Date, Comment_text FROM Comments WHERE Comment_ID = @Comment_ID";
-                    command.Parameters.AddWithValue("@Comment_ID", Comment_ID);
+                    command.CommandText = "SELECT CommentId, UserId, PostId, Date, CommentText FROM Comments WHERE CommentId = @commentId";
+                    command.Parameters.AddWithValue("@commentId", commentId);
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
-                        return new C_Comment
+                        return new Comment
                         {
-                            Comment_ID = reader.GetGuid(0),
-                            User_ID = reader.GetGuid(1),
-                            Post_ID = reader.GetGuid(2),
+                            CommentId = reader.GetGuid(0),
+                            UserId = reader.GetGuid(1),
+                            PostId = reader.GetGuid(2),
                             Date = reader.GetDateTime(3),
-                            Comment_text = reader.GetString(4)
+                            CommentText = reader.GetString(4)
                         };
                     }
                 }
             }
         }
 
-        public C_Hashtag GetHashtag(Guid Hashtag_ID)
+        public Hashtag GetHashtag(Guid hashtagId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT Hashtag_ID, Post_ID, Hashtag_text FROM Hashtags WHERE Hashtag_ID = @Hashtag_ID";
-                    command.Parameters.AddWithValue("@Hashtag_ID", Hashtag_ID);
+                    command.CommandText = "SELECT HashtagId, PostId, HashtagText FROM Hashtags WHERE HashtagId = @hashtagId";
+                    command.Parameters.AddWithValue("@hashtagId", hashtagId);
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
-                        return new C_Hashtag
+                        return new Hashtag
                         {
-                            Hashtag_ID = reader.GetGuid(0),
-                            Post_ID = reader.GetGuid(1),
-                            Hashtag_text = reader.GetString(2)
+                            HashtagId = reader.GetGuid(0),
+                            PostId = reader.GetGuid(1),
+                            HashtagText = reader.GetString(2)
                         };
                     }
                 }
             }
         }
 
-        public C_Like GetLike(Guid Like_ID)
+        public Like GetLike(Guid likeId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT Like_ID, User_ID, Post_ID FROM Likes WHERE Like_ID = @Like_ID";
-                    command.Parameters.AddWithValue("@Like_ID", Like_ID);
+                    command.CommandText = "SELECT LikeId, UserId, PostId FROM Likes WHERE LikeId = @likeId";
+                    command.Parameters.AddWithValue("@likeId", likeId);
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
-                        return new C_Like
+                        return new Like
                         {
-                            Like_ID = reader.GetGuid(0),
-                            User_ID = reader.GetGuid(1),
-                            Post_ID = reader.GetGuid(2)
+                            LikeId = reader.GetGuid(0),
+                            UserId = reader.GetGuid(1),
+                            PostId = reader.GetGuid(2)
                         };
                     }
                 }
             }
         }
 
-        public C_Mark GetMark(Guid Mark_ID)
+        public Mark GetMark(Guid markId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT Mark_ID, Post_ID, User_ID FROM Marks WHERE Mark_ID = @Mark_ID";
-                    command.Parameters.AddWithValue("@Mark_ID", Mark_ID);
+                    command.CommandText = "SELECT MarkId, PostId, UserId FROM Marks WHERE MarkId = @markId";
+                    command.Parameters.AddWithValue("@markId", markId);
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
-                        return new C_Mark
+                        return new Mark
                         {
-                            Mark_ID = reader.GetGuid(0),
-                            Post_ID = reader.GetGuid(1),
-                            User_ID = reader.GetGuid(2)
+                            MarkId = reader.GetGuid(0),
+                            PostId = reader.GetGuid(1),
+                            UserId = reader.GetGuid(2)
                         };
                     }
                 }
             }
         }
 
-        public C_Post GetPost(Guid Post_ID)
+        public Post GetPost(Guid postId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT Post_ID, User_ID, Picture, Date FROM Posts WHERE Post_ID = @Post_ID";
-                    command.Parameters.AddWithValue("@Post_ID", Post_ID);
+                    command.CommandText = "SELECT PostId, UserId, Picture, Date FROM Posts WHERE PostId = @postId";
+                    command.Parameters.AddWithValue("@postId", postId);
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
-                       /* var Post = new C_Post
+                        return new Post
                         {
-                        };
-                        Post.Post_ID = reader.GetGuid(0);
-                        Post.User_ID = reader.GetGuid(1);
-                        long bytes = reader.GetBytes(2, 0, Post.Picture, 0, Post.Picture.Length);
-                        Post.Date = reader.GetDateTime(3);
-                        return Post;*/
-
-                        return new C_Post
-                        {
-                            Post_ID = reader.GetGuid(0),
-                            User_ID = reader.GetGuid(1),
+                            PostId = reader.GetGuid(0),
+                            UserId = reader.GetGuid(1),
                             Picture = (byte[]) reader["Picture"],
                             Date = reader.GetDateTime(3)
                         };
@@ -383,45 +450,45 @@ namespace InstLikeApp.DataLayer.Sql
             }
         }
 
-        public C_Reference GetReference(Guid Reference_ID)
+        public Reference GetReference(Guid referenceId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT Reference_ID, Comment_ID, User_ID FROM References_t WHERE Reference_ID = @Reference_ID";
-                    command.Parameters.AddWithValue("@Reference_ID", Reference_ID);
+                    command.CommandText = "SELECT ReferenceId, CommentId, UserId FROM References_t WHERE ReferenceId = @referenceId";
+                    command.Parameters.AddWithValue("@referenceId", referenceId);
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
-                        return new C_Reference
+                        return new Reference
                         {
-                            Reference_ID = reader.GetGuid(0),
-                            Comment_ID = reader.GetGuid(1),
-                            User_ID = reader.GetGuid(2)
+                            ReferenceId = reader.GetGuid(0),
+                            CommentId = reader.GetGuid(1),
+                            UserId = reader.GetGuid(2)
                         };
                     }
                 }
             }
         }
 
-        public C_User GetUser(Guid User_ID)
+        public User GetUser(Guid userId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT User_ID, User_Name FROM Users WHERE User_ID = @User_ID";
-                    command.Parameters.AddWithValue("@User_ID", User_ID);
+                    command.CommandText = "SELECT UserId, UserName FROM Users WHERE UserId = @userId";
+                    command.Parameters.AddWithValue("@userId", userId);
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
-                        return new C_User
+                        return new User
                         {
-                            User_ID = (Guid)reader["User_ID"]/*.GetGuid(0)*/,
-                            User_Name = (String)reader["User_Name"]/*.GetString(1)*/,
+                            UserId = (Guid)reader["UserId"]/*.GetGuid(0)*/,
+                            UserName = (String)reader["UserName"]/*.GetString(1)*/,
                         };
                     }
                 }

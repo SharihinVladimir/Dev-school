@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{706608DC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstLikeApp.Tests", "InstLikeApp.Tests\InstLikeApp.Tests.csproj", "{95B94505-51D8-4FD0-8596-CB0F435119EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstLikeApp.WebApi", "InstLikeApp.WebApi\InstLikeApp.WebApi.csproj", "{45F37D7A-7964-49BF-AEFB-3EDB63CF1691}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{95B94505-51D8-4FD0-8596-CB0F435119EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95B94505-51D8-4FD0-8596-CB0F435119EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95B94505-51D8-4FD0-8596-CB0F435119EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45F37D7A-7964-49BF-AEFB-3EDB63CF1691}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45F37D7A-7964-49BF-AEFB-3EDB63CF1691}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45F37D7A-7964-49BF-AEFB-3EDB63CF1691}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45F37D7A-7964-49BF-AEFB-3EDB63CF1691}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

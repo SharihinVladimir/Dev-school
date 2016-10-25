@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace InstLikeApp.Model
 {
-    public class C_Hashtag
+    public class Hashtag
     {
-        public Guid Hashtag_ID { get; set; }
-        public Guid Post_ID { get; set; }
-        public string Hashtag_text { get; set; }
+        public Guid HashtagId { get; set; }
+        public Guid PostId { get; set; }
+        public string HashtagText { get; set; }
     }
 }

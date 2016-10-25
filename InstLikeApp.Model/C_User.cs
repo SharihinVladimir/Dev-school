@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace InstLikeApp.Model
 {
-    public class C_User
+    public class User
     {
-        public Guid User_ID { get; set; }
-        public string User_Name { get; set; }
+        public Guid UserId { get; set; }
+        public string UserName { get; set; }
     }
 }

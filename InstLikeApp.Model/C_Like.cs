@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace InstLikeApp.Model
 {
-    public class C_Like
+    public class Like
     {
-        public Guid Like_ID { get; set; }
-        public Guid User_ID { get; set; }
-        public Guid Post_ID { get; set; }
+        public Guid LikeId { get; set; }
+        public Guid UserId { get; set; }
+        public Guid PostId { get; set; }
     }
 }
