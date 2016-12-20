@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InstLikeApp.Model
 {
-    public interface I_DataLayer
+    public interface IDataLayer
     {
         User AddUser(User user);
         Post AddPost(Post post);
@@ -31,5 +31,13 @@ namespace InstLikeApp.Model
         int DeleteLike(Guid likeId);
         int DeleteMark(Guid markId);
         int DeleteReference(Guid referenceId);
+
+        Comment[] GetCommentsToPost(Guid postId);
+        Comment[] GetCommentsOfUser(Guid userId);
+
+        Post[] GetAllPosts();
+        Post[] GetPostsOfUser(Guid userId);
+
+        User GetUserByName(string userName);
     }
 }

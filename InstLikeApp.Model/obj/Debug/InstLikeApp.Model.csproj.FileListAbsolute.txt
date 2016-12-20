@@ -3,3 +3,9 @@ C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.
 C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Model\obj\Debug\InstLikeApp.Model.csprojResolveAssemblyReference.cache
 C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Model\obj\Debug\InstLikeApp.Model.dll
 C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.Model\obj\Debug\InstLikeApp.Model.pdb
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.Model\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.Model\bin\Debug\System.Net.Http.dll
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.Model\bin\Debug\System.Net.Http.WebRequest.dll
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.Model\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.Model\bin\Debug\System.Net.Http.xml
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.Model\bin\Debug\System.Net.Http.WebRequest.xml

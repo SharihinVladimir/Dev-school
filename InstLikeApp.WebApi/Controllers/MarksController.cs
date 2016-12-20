@@ -11,7 +11,7 @@ namespace InstLikeApp.WebApi.Controllers
     public class MarksController : ApiController
     {
         private const string ConnectionString = "Data Source=vladimir-pc; Initial Catalog=InstLikeApp2; Integrated Security=True";
-        private readonly I_DataLayer _dataLayer;
+        private readonly IDataLayer _dataLayer;
 
         public MarksController()
         {

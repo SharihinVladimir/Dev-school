@@ -11,7 +11,7 @@ namespace InstLikeApp.WebApi.Controllers
     public class UsersController : ApiController
     {
         private const string ConnectionString = "Data Source=vladimir-pc; Initial Catalog=InstLikeApp2; Integrated Security=True";
-        private readonly I_DataLayer _dataLayer;
+        private readonly IDataLayer _dataLayer;
 
         public UsersController()
         {
@@ -19,7 +19,8 @@ namespace InstLikeApp.WebApi.Controllers
         }
 
         [HttpPost]
-        public User AddUser(User user)
+        [Route("api/users/AddUser/")]
+        public User AddUser([FromBody]User user)
         {
             return _dataLayer.AddUser(user);
         }
@@ -29,6 +30,13 @@ namespace InstLikeApp.WebApi.Controllers
         public User GetUser(Guid id)
         {
             return _dataLayer.GetUser(id);
+        }
+
+        [HttpGet]
+        [Route("api/users/GetUserByName/{userName}")]
+        public User GetUserByName(string userName)
+        {
+            return _dataLayer.GetUserByName(userName);
         }
 
         [HttpDelete]

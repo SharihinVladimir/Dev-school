@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstLikeApp.Tests", "InstLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstLikeApp.WebApi", "InstLikeApp.WebApi\InstLikeApp.WebApi.csproj", "{45F37D7A-7964-49BF-AEFB-3EDB63CF1691}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstLikeApp.Client", "InstLikeApp.Client\InstLikeApp.Client.csproj", "{11F5642E-413E-4FB9-BAE3-C4106F550662}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstLikeApp.Log", "InstLikeApp.Log\InstLikeApp.Log.csproj", "{5AA61ECD-D8F6-4B1A-BE0F-7415E459BB84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,14 @@ Global
 		{45F37D7A-7964-49BF-AEFB-3EDB63CF1691}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45F37D7A-7964-49BF-AEFB-3EDB63CF1691}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45F37D7A-7964-49BF-AEFB-3EDB63CF1691}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11F5642E-413E-4FB9-BAE3-C4106F550662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11F5642E-413E-4FB9-BAE3-C4106F550662}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11F5642E-413E-4FB9-BAE3-C4106F550662}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11F5642E-413E-4FB9-BAE3-C4106F550662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AA61ECD-D8F6-4B1A-BE0F-7415E459BB84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AA61ECD-D8F6-4B1A-BE0F-7415E459BB84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AA61ECD-D8F6-4B1A-BE0F-7415E459BB84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AA61ECD-D8F6-4B1A-BE0F-7415E459BB84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

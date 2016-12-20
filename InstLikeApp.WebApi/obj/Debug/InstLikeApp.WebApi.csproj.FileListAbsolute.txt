@@ -46,3 +46,10 @@ C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.
 C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.WebApi\bin\ru\System.Web.Http.WebHost.resources.dll
 C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.WebApi\obj\Debug\InstLikeApp.WebApi.dll
 C:\Users\Vladimir\Documents\Visual Studio 2015\Projects\InstLikeApp\InstLikeApp.WebApi\obj\Debug\InstLikeApp.WebApi.pdb
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.WebApi\bin\NLog.config
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.WebApi\bin\NLog.dll
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.WebApi\bin\NLog.xml
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.WebApi\bin\System.Net.Http.dll
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.WebApi\bin\System.Net.Http.WebRequest.dll
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.WebApi\bin\System.Net.Http.xml
+C:\Users\Vladimir\documents\visual studio 2015\Projects\InstLikeApp\InstLikeApp.WebApi\bin\System.Net.Http.WebRequest.xml

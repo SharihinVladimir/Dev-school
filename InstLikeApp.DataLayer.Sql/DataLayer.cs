@@ -5,11 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using InstLikeApp.Model;
 using System.Data.SqlClient;
+using NLog;
+using NLog.Config;
+using System.Diagnostics;
 
 namespace InstLikeApp.DataLayer.Sql
 {
-    public class DataLayer : I_DataLayer
+    public class DataLayer : IDataLayer
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+        //private readonly Logger _instance = LogManager.GetCurrentClassLogger();
+
         private readonly string _connectionString;
 
         public DataLayer(string connectionString)
@@ -20,7 +26,7 @@ namespace InstLikeApp.DataLayer.Sql
             _connectionString = connectionString;
         }
 
-        //Writing into BD--------------------------------------------------------------
+        //Writing into BD-------------------------------------------------------------->
         public Comment AddComment(Comment comment)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -28,35 +34,28 @@ namespace InstLikeApp.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    //Exceptions-----------------------------------------------------
-                    command.CommandText = "SELECT * FROM Users WHERE UserId = @userId";
-                    command.Parameters.AddWithValue("@userId", comment.UserId);
-                    var reader = command.ExecuteReader();
-                    reader.Read();
-                    var isUser = reader.HasRows;
-                    reader.Close();
+                    //Exceptions----------------------------------------------------->
+                    if (comment.CommentText.Length > 500)
+                        throw new ArgumentException("Comment is too long.");
 
-                    command.CommandText = "SELECT * FROM Posts WHERE PostId = @postId";
-                    command.Parameters.AddWithValue("@postId", comment.PostId);
-                    reader = command.ExecuteReader();
-                    reader.Read();
-                    var isPost = reader.HasRows;
-                    reader.Close();
+                    command.CommandText = "SELECT TOP (1) UserId FROM Users WHERE UserId = @usId";
+                    command.Parameters.AddWithValue("@usId", comment.UserId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        if (!reader.HasRows)
+                            throw new ArgumentException("User with that ID not found.");
+                    }                
 
-                    try
+                    command.CommandText = "SELECT TOP (1) PostId FROM Posts WHERE PostId = @pId";
+                    command.Parameters.AddWithValue("@pId", comment.PostId);
+                    using (var reader = command.ExecuteReader())
                     {
-                        if (!isUser)
-                            throw new Exception("Пользователя с указанным Id не существует.");
-                        else if (!isPost)
-                            throw new Exception("Поста с указанным Id не существует.");
-                        else if (comment.CommentText.Length > 500)
-                            throw new Exception("Комментарий должен содержать не более 500 символов.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Ошибка: " + ex.Message);
-                    }
-                    //------------------------------------------------------------------
+                        reader.Read();
+                        if (!reader.HasRows)
+                            throw new ArgumentException("Post with that ID not found.");
+                    }      
+                    //----------------------------------------------------------------<
 
                     comment.CommentId = Guid.NewGuid();
                     command.CommandText = "INSERT INTO Comments (CommentId, UserId, PostId, Date, CommentText) VALUES (@commentId, @userId, @postId, @date, @commentText)";
@@ -66,6 +65,7 @@ namespace InstLikeApp.DataLayer.Sql
                     command.Parameters.AddWithValue("@date", comment.Date);
                     command.Parameters.AddWithValue("@commentText", comment.CommentText);
                     command.ExecuteNonQuery();
+                    logger.Trace("log "); //logger.Trace("Logging");
                     return comment;
                 }
             }
@@ -78,26 +78,36 @@ namespace InstLikeApp.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    //Exceptions-----------------------------------------------------
-                    /*command.CommandText = "SELECT * FROM Posts WHERE PostId = @postId";
-                    command.Parameters.AddWithValue("@postId", hashtag.PostId);
-                    var readerPostId = command.ExecuteReader();
-                    readerPostId.Read();
+                    //Exceptions----------------------------------------------------->
+                    if (hashtag.HashtagText[0] != '#')
+                        throw new ArgumentException("Hashtag must have # in beginning.");
 
-                    try
+                    string wrongSymbols = "!?/.,<>%^&$*+- []{}()'`~@#\"";
+                    for (int i = 0; i < wrongSymbols.Length; i++)
+                        if (hashtag.HashtagText.Substring(1,hashtag.HashtagText.Length-1).Contains(wrongSymbols[i]))
+                            throw new ArgumentException("Hastag text contains wrong symbols.");
+
+                    if (hashtag.HashtagText.Length > 30)
+                        throw new ArgumentException("Hashtag is too long.");
+
+                    command.CommandText = "SELECT TOP (1) HashtagId FROM Hashtags WHERE HashtagText = @ht";
+                    command.Parameters.AddWithValue("@ht", hashtag.HashtagText);
+                    using (var reader = command.ExecuteReader())
                     {
-                        if (!readerPostId.HasRows)
-                            throw new Exception("Поста с указанным Id не существует.");
-                        else if (hashtag.HashtagText.Length > 30)
-                            throw new Exception("Хэштег должен содержать не более 30 символов.");
-                        else if (hashtag.HashtagText[0] != '#')
-                            throw new Exception("Хэштег должен начинаться с символа '#'.");
+                        reader.Read();
+                        if (reader.HasRows)
+                            throw new ArgumentException("That hashtag already exists.");
                     }
-                    catch (Exception ex)
+
+                    command.CommandText = "SELECT TOP (1) PostId FROM Posts WHERE PostId = @pId";
+                    command.Parameters.AddWithValue("@pId", hashtag.PostId);
+                    using (var reader = command.ExecuteReader())
                     {
-                        Console.WriteLine("Ошибка: " + ex.Message);
-                    }*/
-                    //------------------------------------------------------------------
+                        reader.Read();
+                        if (!reader.HasRows)
+                            throw new ArgumentException("Post with that ID not found.");
+                    }
+                    //----------------------------------------------------------------<
 
                     hashtag.HashtagId = Guid.NewGuid();
                     command.CommandText = "INSERT INTO Hashtags (HashtagId, PostId, HashtagText) VALUES (@hashtagId, @postId, @hashtagText)";
@@ -105,6 +115,7 @@ namespace InstLikeApp.DataLayer.Sql
                     command.Parameters.AddWithValue("@postId", hashtag.PostId);
                     command.Parameters.AddWithValue("@hashtagText", hashtag.HashtagText);
                     command.ExecuteNonQuery();
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return hashtag;
                 }
             }
@@ -117,37 +128,35 @@ namespace InstLikeApp.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    //Exceptions-----------------------------------------------------
-                   /* command.CommandText = "SELECT * FROM Users WHERE UserId = @userId";
-                    command.Parameters.AddWithValue("@userId", like.UserId);
-                    var readerUserId = command.ExecuteReader();
-                    readerUserId.Read();
-
-                    command.CommandText = "SELECT * FROM Posts WHERE PostId = @postId";
-                    command.Parameters.AddWithValue("@postId", like.PostId);
-                    var readerPostId = command.ExecuteReader();
-                    readerPostId.Read();
-
-                    command.CommandText = "SELECT * FROM Posts WHERE (PostId = @postId) AND (UserId = @userId) ";
-                    command.Parameters.AddWithValue("@postId", like.PostId);
-                    command.Parameters.AddWithValue("@userId", like.UserId);
-                    var readerUserPostId = command.ExecuteReader();
-                    readerPostId.Read();
-
-                    try
+                    //Exceptions----------------------------------------------------->
+                    command.CommandText = "SELECT TOP (1) LikeId FROM Likes WHERE (PostId = @pId) AND (UserId = @uId) ";
+                    command.Parameters.AddWithValue("@pId", like.PostId);
+                    command.Parameters.AddWithValue("@uId", like.UserId);
+                    using (var reader = command.ExecuteReader())
                     {
-                        if (!readerUserId.HasRows)
-                            throw new Exception("Пользователя с указанным Id не существует.");
-                        else if (!readerPostId.HasRows)
-                            throw new Exception("Поста с указанным Id не существует.");
-                        else if (readerUserPostId.HasRows)
-                            throw new Exception("Лайк от указанного пользователя для указанного поста уже существует.");
+                        reader.Read();
+                        if (reader.HasRows)
+                            throw new ArgumentException("Like for this post already exists.");
                     }
-                    catch (Exception ex)
+
+                    command.CommandText = "SELECT TOP (1) UserId FROM Users WHERE UserId = @usId";
+                    command.Parameters.AddWithValue("@usId", like.UserId);
+                    using (var reader = command.ExecuteReader())
                     {
-                        Console.WriteLine("Ошибка: " + ex.Message);
-                    }*/
-                    //------------------------------------------------------------------
+                        reader.Read();
+                        if (!reader.HasRows)
+                            throw new ArgumentException("User with that ID not found.");
+                    }
+
+                    command.CommandText = "SELECT TOP (1) PostId FROM Posts WHERE PostId = @posId";
+                    command.Parameters.AddWithValue("@posId", like.PostId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        if (!reader.HasRows)
+                            throw new ArgumentException("Post with that ID not found.");
+                    }
+                    //----------------------------------------------------------------<
 
                     like.LikeId = Guid.NewGuid();
                     command.CommandText = "INSERT INTO Likes (LikeId,UserId,PostId) VALUES (@likeId, @userId, @postId)";
@@ -155,6 +164,7 @@ namespace InstLikeApp.DataLayer.Sql
                     command.Parameters.AddWithValue("@userId", like.UserId);
                     command.Parameters.AddWithValue("@postId", like.PostId);
                     command.ExecuteNonQuery();
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return like;
                 }
             }
@@ -167,12 +177,43 @@ namespace InstLikeApp.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
+                    //Exceptions----------------------------------------------------->
+                    command.CommandText = "SELECT TOP (1) MarkId FROM Marks WHERE (PostId = @pId) AND (UserId = @uId) ";
+                    command.Parameters.AddWithValue("@pId", mark.PostId);
+                    command.Parameters.AddWithValue("@uId", mark.UserId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        if (reader.HasRows)
+                            throw new ArgumentException("Like for this post already exists.");
+                    }
+
+                    command.CommandText = "SELECT TOP (1) UserId FROM Users WHERE UserId = @usId";
+                    command.Parameters.AddWithValue("@usId", mark.UserId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        if (!reader.HasRows)
+                            throw new ArgumentException("User with that ID not found.");
+                    }
+
+                    command.CommandText = "SELECT TOP (1) PostId FROM Posts WHERE PostId = @posId";
+                    command.Parameters.AddWithValue("@posId", mark.PostId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        if (!reader.HasRows)
+                            throw new ArgumentException("Post with that ID not found.");
+                    }
+                    //---------------------------------------------------------------<
+
                     mark.MarkId = Guid.NewGuid();
                     command.CommandText = "INSERT INTO Marks (MarkId, PostId, UserId) VALUES (@markId, @postId, @userId)";
                     command.Parameters.AddWithValue("@markId", mark.MarkId);
                     command.Parameters.AddWithValue("@postId", mark.PostId);
                     command.Parameters.AddWithValue("@userId", mark.UserId);
                     command.ExecuteNonQuery();
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return mark;
                 }
             }
@@ -185,6 +226,20 @@ namespace InstLikeApp.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
+                    //Exceptions----------------------------------------------------->
+                    if (post.Picture.Length > 209715200)
+                        throw new ArgumentException("Size of photo too big.");
+
+                    command.CommandText = "SELECT TOP (1) UserId FROM Users WHERE UserId = @uId";
+                    command.Parameters.AddWithValue("@uId", post.UserId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        if (!reader.HasRows)
+                            throw new ArgumentException("User with that ID not found.");
+                    }
+                    //---------------------------------------------------------------<
+
                     post.PostId = Guid.NewGuid();
                     command.CommandText = "INSERT INTO Posts (PostId, UserId, Picture, Date) VALUES (@postId, @userId, @picture, @date)";
                     command.Parameters.AddWithValue("@postId", post.PostId);
@@ -192,6 +247,7 @@ namespace InstLikeApp.DataLayer.Sql
                     command.Parameters.AddWithValue("@picture", post.Picture);
                     command.Parameters.AddWithValue("@date", post.Date);
                     command.ExecuteNonQuery();
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return post;
                 }
             }
@@ -204,12 +260,33 @@ namespace InstLikeApp.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
+                    //Exceptions----------------------------------------------------->
+                    command.CommandText = "SELECT TOP (1) CommentId FROM Comments WHERE CommentId = @cId";
+                    command.Parameters.AddWithValue("@cId", reference.CommentId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        if (!reader.HasRows)
+                            throw new ArgumentException("Comment with that ID not found.");
+                    }
+
+                    command.CommandText = "SELECT TOP (1) UserId FROM Users WHERE UserId = @uId";
+                    command.Parameters.AddWithValue("@uId", reference.UserId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        if (!reader.HasRows)
+                            throw new ArgumentException("User with that ID not found.");
+                    }
+                    //---------------------------------------------------------------<
+
                     reference.ReferenceId = Guid.NewGuid();
                     command.CommandText = "INSERT INTO References_t (ReferenceId, CommentId, UserId) VALUES (@referenceId, @commentId, @userId)";
                     command.Parameters.AddWithValue("@referenceId", reference.ReferenceId);
                     command.Parameters.AddWithValue("@commentId", reference.CommentId);
                     command.Parameters.AddWithValue("@userId", reference.UserId);
                     command.ExecuteNonQuery();
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return reference;
                 }
             }
@@ -222,11 +299,31 @@ namespace InstLikeApp.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
+                    //Exceptions----------------------------------------------------->
+                    if (user.UserName.Length > 30)
+                        throw new ArgumentException("User name too long.");
+
+                    string wrongSymbols = "!?/.,<>%^&$*+- []{}()'`~@#\"";
+                    for (int i = 0; i < wrongSymbols.Length; i++)
+                        if (user.UserName.Contains(wrongSymbols[i]))
+                            throw new ArgumentException("Username contains wrong symbols.");
+
+                    command.CommandText = "SELECT TOP (1) UserId FROM Users WHERE UserName = @un";
+                    command.Parameters.AddWithValue("@un", user.UserName);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        if (reader.HasRows)
+                            throw new ArgumentException("That username already exists.");
+                    }
+                    //---------------------------------------------------------------<
+
                     user.UserId = Guid.NewGuid();
                     command.CommandText = "INSERT INTO Users (UserId, UserName) VALUES (@userId, @userName)";
                     command.Parameters.AddWithValue("@userId", user.UserId);
                     command.Parameters.AddWithValue("@userName", user.UserName);
                     command.ExecuteNonQuery();
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return user;
                 }
             }
@@ -256,6 +353,7 @@ namespace InstLikeApp.DataLayer.Sql
                 {
                     command.CommandText = "DELETE Hashtags WHERE HashtagId = @hashtagId";
                     command.Parameters.AddWithValue("@hashtagId", hashtagId);
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return command.ExecuteNonQuery();
                 }
             }
@@ -270,6 +368,7 @@ namespace InstLikeApp.DataLayer.Sql
                 {
                     command.CommandText = "DELETE Likes WHERE LikeId = @likeId";
                     command.Parameters.AddWithValue("@likeId", likeId);
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return command.ExecuteNonQuery();
                 }
             }
@@ -284,6 +383,7 @@ namespace InstLikeApp.DataLayer.Sql
                 {
                     command.CommandText = "DELETE Marks WHERE MarkId = @markId";
                     command.Parameters.AddWithValue("@markId", markId);
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return command.ExecuteNonQuery();
                 }
             }
@@ -298,6 +398,7 @@ namespace InstLikeApp.DataLayer.Sql
                 {
                     command.CommandText = "DELETE Posts WHERE PostId = @postId";
                     command.Parameters.AddWithValue("@postId", postId);
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return command.ExecuteNonQuery();
                 }
             }
@@ -312,6 +413,7 @@ namespace InstLikeApp.DataLayer.Sql
                 {
                     command.CommandText = "DELETE References_t WHERE ReferenceId = @referenceId";
                     command.Parameters.AddWithValue("@referenceId", referenceId);
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return command.ExecuteNonQuery();
                 }
             }
@@ -326,6 +428,7 @@ namespace InstLikeApp.DataLayer.Sql
                 {
                     command.CommandText = "DELETE Users WHERE UserId = @userId";
                     command.Parameters.AddWithValue("@userId", userId);
+                    logger.Trace("log ");//logger.Trace("Logging");
                     return command.ExecuteNonQuery();
                 }
             }
@@ -344,6 +447,7 @@ namespace InstLikeApp.DataLayer.Sql
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
+                        logger.Trace("log ");//logger.Trace("Logging");
                         return new Comment
                         {
                             CommentId = reader.GetGuid(0),
@@ -369,6 +473,7 @@ namespace InstLikeApp.DataLayer.Sql
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
+                        logger.Trace("log ");//logger.Trace("Logging");
                         return new Hashtag
                         {
                             HashtagId = reader.GetGuid(0),
@@ -392,6 +497,7 @@ namespace InstLikeApp.DataLayer.Sql
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
+                        logger.Trace("log ");//logger.Trace("Logging");
                         return new Like
                         {
                             LikeId = reader.GetGuid(0),
@@ -415,6 +521,7 @@ namespace InstLikeApp.DataLayer.Sql
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
+                        logger.Trace("log ");//logger.Trace("Logging");
                         return new Mark
                         {
                             MarkId = reader.GetGuid(0),
@@ -438,6 +545,7 @@ namespace InstLikeApp.DataLayer.Sql
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
+                        logger.Trace("log ");//logger.Trace("Logging");
                         return new Post
                         {
                             PostId = reader.GetGuid(0),
@@ -462,6 +570,7 @@ namespace InstLikeApp.DataLayer.Sql
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
+                        logger.Trace("log ");//logger.Trace("Logging");
                         return new Reference
                         {
                             ReferenceId = reader.GetGuid(0),
@@ -475,6 +584,8 @@ namespace InstLikeApp.DataLayer.Sql
 
         public User GetUser(Guid userId)
         {
+            //logger = LogManager.GetCurrentClassLogger();
+
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -485,16 +596,179 @@ namespace InstLikeApp.DataLayer.Sql
                     using (var reader = command.ExecuteReader())
                     {
                         reader.Read();
+                        logger.Trace("log ");//logger.Trace("Logging");
                         return new User
                         {
                             UserId = (Guid)reader["UserId"]/*.GetGuid(0)*/,
-                            UserName = (String)reader["UserName"]/*.GetString(1)*/,
+                            UserName = (String)reader["UserName"]/*.GetString(1)*/ 
                         };
+
+                       //logger.Trace("get user");
                     }
                 }
             }
         }
 
-        //--------------------------------------------------------------
+        //Additional methods for comments---------------------------------------------------------->
+        public Comment[] GetCommentsToPost(Guid postId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT CommentId, UserId, PostId, Date, CommentText FROM Comments WHERE PostId = @postId ORDER BY Date";
+                    command.Parameters.AddWithValue("@postId", postId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        var comments = new Comment[0];
+                        int i = 0;
+                        while (reader.Read())
+                        {
+                            Array.Resize(ref comments, comments.Length + 1);
+                            comments[i] = new Comment
+                            {
+                                CommentId = reader.GetGuid(0),
+                                UserId = reader.GetGuid(1),
+                                PostId = reader.GetGuid(2),
+                                Date = reader.GetDateTime(3),
+                                CommentText = reader.GetString(4)
+                            };
+                            i++;
+                        }
+                        logger.Trace("log ");//logger.Trace("Logging");
+                        return comments;
+                    }
+                }
+            }
+        }
+
+        public Comment[] GetCommentsOfUser(Guid userId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT CommentId, UserId, PostId, Date, CommentText FROM Comments WHERE UserId = @userId ";
+                    command.Parameters.AddWithValue("@userId", userId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        var comments = new Comment[0];
+                        int i = 0;
+                        while (reader.Read())
+                        {
+                            Array.Resize(ref comments, comments.Length + 1);
+                            comments[i] = new Comment
+                            {
+                                CommentId = reader.GetGuid(0),
+                                UserId = reader.GetGuid(1),
+                                PostId = reader.GetGuid(2),
+                                Date = reader.GetDateTime(3),
+                                CommentText = reader.GetString(4)
+                            };
+                            i++;
+                        }
+                        logger.Trace("log ");//logger.Trace("Logging");
+                        return comments;
+                    }
+                }
+            }
+        }
+        //-----------------------------------------------------------------------<
+
+        //Additional methods for posts-------------------------------------------->
+        public Post[] GetAllPosts()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT PostId, UserId, Picture, Date FROM Posts ORDER BY Date DESC"; /*PostId, UserId, Picture, Date*/
+                    using (var reader = command.ExecuteReader())
+                    {
+                        var posts = new Post[0];
+                        int i = 0;
+                        while (reader.Read())
+                        {
+                            Array.Resize(ref posts, posts.Length + 1);
+                            posts[i] = new Post
+                            {
+                                PostId = reader.GetGuid(0),
+                                UserId = reader.GetGuid(1),
+                                Picture = (byte[])reader["Picture"],
+                                Date = reader.GetDateTime(3),
+                            };
+                            i++;
+                        }
+                        logger.Trace("log ");//logger.Trace("Logging");
+                        return posts;
+                    }
+                }
+            }
+        }
+
+        public Post[] GetPostsOfUser(Guid userId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT PostId, UserId, Picture, Date  FROM Posts WHERE UserId = @userId ORDER BY Date DESC"; /*PostId, UserId, Picture, Date*/
+                    command.Parameters.AddWithValue("@userId", userId);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        var posts = new Post[0];
+                        int i = 0;
+                        while (reader.Read())
+                        {
+                            Array.Resize(ref posts, posts.Length + 1);
+                            posts[i] = new Post
+                            {
+                                PostId = reader.GetGuid(0),
+                                UserId = reader.GetGuid(1),
+                                Picture = (byte[])reader["Picture"],
+                                Date = reader.GetDateTime(3),
+                            };
+                            i++;
+                        }
+                        logger.Trace("log ");//logger.Trace("Logging");
+                        return posts;
+                    }
+                }
+            }
+        }
+        //-----------------------------------------------------------------------<
+
+        //additional methods for users------------------------------------------->
+        public User GetUserByName(string userName)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT UserId, UserName FROM Users WHERE UserName = @userName";
+                    command.Parameters.AddWithValue("@userName", userName);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        logger.Trace("log ");//logger.Trace("Logging");
+                        if (reader.HasRows)
+                            return new User
+                            {
+                                UserId = (Guid)reader["UserId"]/*.GetGuid(0)*/,
+                                UserName = (String)reader["UserName"]/*.GetString(1)*/
+                            };
+                        else
+                            return new User { };
+                    }
+                }
+            }
+        }
+        //-----------------------------------------------------------------------<
+
     }
 }
